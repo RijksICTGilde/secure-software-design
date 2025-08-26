@@ -1,0 +1,58 @@
+
+services:
+  postgres:
+    image: postgres:16.3
+    shm_size: 128mb
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PW}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - KEYCLOAK_USER=${KEYCLOAK_USER}
+      - KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD}
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./postgres/initdb/:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "keycloak", "-U", "keycloak"]
+      interval: 10s
+      timeout: 2s
+      retries: 3
+
+
+  backend:
+    image: backend:dev
+    build:
+      context: ./backend
+    ports:
+      - 8000:8000
+
+  frontend:
+    image: frontend:dev
+    build:
+      context: ./frontend
+    ports:
+      - 3000:80
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.4
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PW}
+    ports:
+      - 8080:8080
+    command: start-dev --import-realm
+    volumes:
+      - ./keycloak/import:/opt/keycloak/data/import
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres:

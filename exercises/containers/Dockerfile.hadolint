@@ -1,0 +1,30 @@
+# Bad Dockerfile with multiple security issues for hadolint demonstration
+FROM ubuntu:latest
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    vim \
+    sudo \
+    ssh
+
+EXPOSE 22
+
+ADD https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 /usr/local/bin/hadolint
+
+RUN chmod +x /usr/local/bin/hadolint
+
+RUN apt-get install -y python3 python3-pip
+
+COPY * /app/
+
+ENV SECRET_KEY=supersecretpassword123
+ENV DATABASE_PASSWORD=admin123
+
+USER root
+
+RUN sudo mkdir -p /var/log/myapp
+
+WORKDIR /
+
+CMD echo "Starting insecure application" && python3 /app/main.py

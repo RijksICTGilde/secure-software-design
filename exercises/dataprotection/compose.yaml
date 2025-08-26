@@ -1,0 +1,17 @@
+
+services:
+  analyzer:
+    image: mcr.microsoft.com/presidio-analyzer:latest
+    ports:
+      - "5002:3000"
+  anonymizer:
+    image: mcr.microsoft.com/presidio-anonymizer:latest
+    ports:
+      - "5004:3000"
+  databunkerer:
+    image: securitybunker/databunker:latest
+    command: demo
+    ports:
+      - "3000:3000"
+
+

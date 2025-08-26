@@ -1,0 +1,18 @@
+# Multi-stage build for secure distroless Java container
+
+# Stage 1: Build stage with full JDK
+FROM eclipse-temurin:17-jdk-jammy AS builder
+
+# Set working directory
+WORKDIR /app
+
+# Copy Java source code
+COPY java-src/SecureApp.java .
+
+# Compile the Java application
+RUN javac SecureApp.java
+
+# Set the entrypoint to run our Java application
+ENTRYPOINT ["java", "SecureApp"]
+
+
