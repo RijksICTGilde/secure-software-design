@@ -1,0 +1,26 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: kind
+networking:
+  podSubnet: "10.244.0.0/16"
+  serviceSubnet: "10.96.0.0/12"
+nodes:
+  - role: control-plane
+    image: kindest/node:v1.32.5
+    # extraMounts:
+    # - hostPath: ./files
+    #   containerPath: /files
+    #   readOnly: true
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 80
+        listenAddress: 127.0.0.1
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 443
+        listenAddress: 127.0.0.1 # omit for 0.0.0.0
+        protocol: TCP
+  - role: worker
+    image: kindest/node:v1.32.5
+  - role: worker
+    image: kindest/node:v1.32.5

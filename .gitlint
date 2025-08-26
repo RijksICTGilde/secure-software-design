@@ -1,0 +1,13 @@
+[general]
+ignore=B6
+
+extra-path=scripts/gitlint_emoji.py
+
+[title-max-length]
+line-length=80
+
+[title-min-length]
+min-length=5
+
+[ignore-by-title]
+ignore=B6
